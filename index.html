@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Akhil — AI Engineer</title>
+  <meta name="description" content="Akhil — AI engineer building LLM systems, agents and retrieval pipelines that ship." />
+  <script>
+    // set theme before paint so there's no flash
+    try {
+      var t = localStorage.getItem('theme');
+      document.documentElement.dataset.theme = t || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+    } catch (e) { document.documentElement.dataset.theme = 'light'; }
+    document.documentElement.classList.add('js');
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Silkscreen&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <script type="module" crossorigin src="./assets/index-CN0B5Ecg.js"></script>
+  <link rel="stylesheet" crossorigin href="./assets/index-BpnyqKMC.css">
+</head>
+<body>
+  <div class="preloader" aria-hidden="true">
+    <span class="pre-label">LOADING</span>
+    <span class="pre-bar"><i></i></span>
+    <span class="pre-count">000</span>
+  </div>
+
+  <header class="nav">
+    <a href="#top" class="logo" data-scramble>AKHIL</a>
+    <nav aria-label="Primary">
+      <a href="#about" data-scramble>ABOUT</a>
+      <a href="#work" data-scramble>WORK</a>
+      <a href="#experience" data-scramble>EXPERIENCE</a>
+      <a href="#contact" data-scramble>LET'S TALK</a>
+      <button class="theme-toggle" type="button" aria-label="Switch colour theme">
+        <span class="tt-dot" aria-hidden="true"></span><span class="tt-label">DARK</span>
+      </button>
+    </nav>
+  </header>
+
+  <main id="top">
+    <!-- HERO -->
+    <section class="hero">
+      <div class="hero-left">
+        <h1 class="hero-name" aria-label="Akhil"><span class="mask"><span class="rise">AKHIL</span></span></h1>
+        <p class="hero-meta"><span>// AI ENGINEER</span><span>©2026</span></p>
+      </div>
+      <p class="hero-intro" data-reveal>
+        INDEPENDENT AI ENGINEER BUILDING LLM SYSTEMS, AGENTS AND RETRIEVAL PIPELINES THAT ACTUALLY SHIP TO PRODUCTION.
+      </p>
+      <div class="hero-foot">
+        <span class="blink">[ SCROLL ]</span>
+        <span class="hero-status"><i class="dot"></i> AVAILABLE FOR PROJECTS</span>
+      </div>
+    </section>
+
+    <!-- ABOUT -->
+    <section class="about" id="about">
+      <p class="label" data-reveal>[ 01 ] ABOUT</p>
+      <p class="statement" data-words>
+        I turn messy data and large language models into products people trust. Retrieval that finds the right answer, agents that finish the job, and evals that prove it works.
+      </p>
+      <div class="about-grid">
+        <div data-reveal><span class="k">FOCUS</span><span class="v">LLM APPS · RAG · AGENTS</span></div>
+        <div data-reveal><span class="k">BASED IN</span><span class="v">INDIA · REMOTE</span></div>
+        <div data-reveal><span class="k">YEARS</span><span class="v">04+</span></div>
+        <div data-reveal><span class="k">SHIPPED</span><span class="v">20+ SYSTEMS</span></div>
+      </div>
+    </section>
+
+    <!-- WORK: 6 cards on a tilted drum, driven by scroll -->
+    <section class="work" id="work">
+      <div class="work-pin">
+        <canvas class="work-gl" aria-hidden="true"></canvas>
+        <div class="work-ui">
+          <p class="label">[ 02 ]</p>
+          <h2>SELECTED WORK</h2>
+          <ol class="work-list"></ol>
+        </div>
+        <p class="work-hint">SCROLL TO BROWSE</p>
+      </div>
+    </section>
+
+    <!-- EXPERIENCE -->
+    <section class="experience" id="experience">
+      <p class="label" data-reveal>[ 03 ] EXPERIENCE</p>
+      <ol class="xp">
+        <li data-reveal><span class="xp-year">2024 — NOW</span><span class="xp-role">SENIOR AI ENGINEER</span><span class="xp-co">COMPANY ONE</span></li>
+        <li data-reveal><span class="xp-year">2022 — 2024</span><span class="xp-role">ML ENGINEER</span><span class="xp-co">COMPANY TWO</span></li>
+        <li data-reveal><span class="xp-year">2021 — 2022</span><span class="xp-role">SOFTWARE ENGINEER</span><span class="xp-co">COMPANY THREE</span></li>
+        <li data-reveal><span class="xp-year">2017 — 2021</span><span class="xp-role">B.TECH, COMPUTER SCIENCE</span><span class="xp-co">UNIVERSITY</span></li>
+      </ol>
+    </section>
+
+    <!-- STACK -->
+    <section class="stack">
+      <p class="label" data-reveal>[ 04 ] TOOLKIT</p>
+      <div class="stack-grid">
+        <div data-reveal><h3>MODELS</h3><p>GPT · CLAUDE · LLAMA<br />MISTRAL · WHISPER</p></div>
+        <div data-reveal><h3>FRAMEWORKS</h3><p>LANGCHAIN · LLAMAINDEX<br />PYTORCH · HUGGINGFACE</p></div>
+        <div data-reveal><h3>DATA</h3><p>PGVECTOR · PINECONE<br />POSTGRES · REDIS</p></div>
+        <div data-reveal><h3>SHIP</h3><p>PYTHON · FASTAPI · TS<br />DOCKER · AWS · GCP</p></div>
+      </div>
+    </section>
+
+    <!-- CONTACT -->
+    <section class="contact" id="contact">
+      <p class="label" data-reveal>[ 05 ] CONTACT</p>
+      <h2 class="contact-big" aria-label="Let's talk"><span class="mask"><span class="rise">LET'S</span></span><span class="mask"><span class="rise">TALK</span></span></h2>
+      <a class="contact-mail" href="mailto:hello@example.com" data-scramble>HELLO@EXAMPLE.COM</a>
+    </section>
+  </main>
+
+  <footer class="foot">
+    <span>© 2026 AKHIL</span>
+    <span class="foot-links">
+      <a href="https://github.com/" data-scramble>GITHUB</a>
+      <a href="https://www.linkedin.com/" data-scramble>LINKEDIN</a>
+      <a href="https://x.com/" data-scramble>X</a>
+    </span>
+    <span>LOCAL <time class="clock">--:--</time> IST</span>
+  </footer>
+
+</body>
+</html>
