@@ -5,6 +5,8 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import Lenis from 'lenis';
 import { initWork } from './work.js';
 import { pixelSwap, pixelOut } from './pixels.js';
+import { initAsk } from './ask.js';
+import { initPolish } from './polish.js';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -54,6 +56,19 @@ toggle.addEventListener('click', async () => {
   swapping = false;
 });
 
+// easter egg: type "sudo" anywhere (outside inputs) for a green phosphor terminal theme; again to leave
+let typed = '';
+addEventListener('keydown', (e) => {
+  if (e.target.closest?.('input, textarea') || e.key.length !== 1) return;
+  typed = (typed + e.key.toLowerCase()).slice(-4);
+  if (typed !== 'sudo' || swapping) return;
+  typed = '';
+  const next = root.dataset.theme === 'term' ? 'dark' : 'term';
+  if (reduced) return setTheme(next);
+  swapping = true;
+  pixelSwap(() => setTheme(next)).finally(() => (swapping = false));
+});
+
 // ---------- text scramble on hover ----------
 const GLYPHS = '!<>-_\\/[]{}=+*^?#01';
 document.querySelectorAll('[data-scramble]').forEach((el) => {
@@ -84,7 +99,7 @@ setInterval(tick, 30_000);
 function scrollFx() {
   if (reduced) return;
   gsap.utils.toArray('[data-reveal]').forEach((el) =>
-    gsap.from(el, { y: 28, autoAlpha: 0, duration: 0.9, ease: 'power3.out', scrollTrigger: { trigger: el, start: 'top 88%', once: true } })
+    gsap.from(el, { y: 28, autoAlpha: 0, duration: 0.9, ease: 'power3.out', clearProps: 'opacity,visibility', scrollTrigger: { trigger: el, start: 'top 88%', once: true } })
   );
   // statement: words light up as you read down (unsplit text stays as the accessible name)
   document.querySelectorAll('[data-words]').forEach((el) => {
@@ -95,7 +110,7 @@ function scrollFx() {
   // hero: name sinks slower than the page and the intro drifts, so the hero peels away with depth
   const hero = { trigger: '.hero', start: 'top top', end: 'bottom top', scrub: true };
   gsap.to('.hero-name', { yPercent: 35, ease: 'none', scrollTrigger: hero });
-  gsap.to('.hero-intro, .hero-meta', { yPercent: -60, autoAlpha: 0, ease: 'none', scrollTrigger: hero });
+  gsap.fromTo('.hero-intro, .hero-meta', { yPercent: 0, autoAlpha: 1 }, { yPercent: -60, autoAlpha: 0, ease: 'none', immediateRender: false, scrollTrigger: hero });
   // experience rows slide in from alternating sides while scrubbing
   gsap.utils.toArray('.xp li').forEach((li, i) =>
     gsap.fromTo(li, { xPercent: i % 2 ? 4 : -4 }, { xPercent: 0, ease: 'none', scrollTrigger: { trigger: li, start: 'top bottom', end: 'top 60%', scrub: true } })
@@ -110,9 +125,10 @@ function intro() {
   if (reduced) return;
   gsap.timeline()
     .from('.hero-name .rise', { yPercent: 105, duration: 1.2, ease: 'power4.out' })
-    .from('.nav > *, .hero-meta span, .hero-foot > *', { y: 14, autoAlpha: 0, duration: 0.7, stagger: 0.06, ease: 'power3.out' }, '-=0.8');
+    .from('.nav > :not(.nav-progress),.hero-meta span, .hero-intro, .hero-foot > *', { y: 14, autoAlpha: 0, duration: 0.7, stagger: 0.06, ease: 'power3.out' }, '-=0.8');
 }
 
+const announceAsk = initAsk({ reduced });
 const pre = document.querySelector('.preloader');
 const count = pre.querySelector('.pre-count');
 const bar = pre.querySelector('.pre-bar i');
@@ -124,9 +140,10 @@ const loading = gsap.to(state, {
 });
 Promise.all([document.fonts.ready, loading.then()]).then(() => {
   initWork(document.querySelector('.work'), { reduced, scrollTo, lenis });
+  initPolish({ reduced, lenis });
   scrollFx();
   ScrollTrigger.refresh();
-  if (reduced) return pre.remove();
+  if (reduced) return pre.remove(), announceAsk();
   intro();
-  pixelOut(pre, 1000).then(() => lenis?.start());
+  pixelOut(pre, 1000).then(() => { lenis?.start(); announceAsk(); });
 });

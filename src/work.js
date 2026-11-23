@@ -214,6 +214,15 @@ export function initWork(section, { reduced, scrollTo, lenis }) {
     m.visible = u.uOpacity.value > 0.001;
   }
 
+  // the camera leans a touch toward the pointer, so the drum feels like a physical object
+  const look = { x: 0, y: 0 };
+  if (!reduced && matchMedia('(pointer: fine)').matches) {
+    addEventListener('pointermove', (e) => {
+      look.x = (e.clientX / innerWidth) * 2 - 1;
+      look.y = (e.clientY / innerHeight) * 2 - 1;
+    });
+  }
+
   const clock = new THREE.Clock();
   function frame() {
     requestAnimationFrame(frame);
@@ -223,6 +232,9 @@ export function initWork(section, { reduced, scrollTo, lenis }) {
     const prev = current;
     current += (target - current) * (reduced ? 1 : 1 - Math.exp(-dt * 5)); // same feel at any fps
     const vel = Math.abs(current - prev) / Math.max(dt, 1e-3) / 60;
+    const ease = 1 - Math.exp(-dt * 3);
+    camera.rotation.y += (-look.x * 0.045 - camera.rotation.y) * ease;
+    camera.rotation.x += (-look.y * 0.03 - camera.rotation.x) * ease;
 
     cards.forEach((m, i) => {
       place(m, i - current);

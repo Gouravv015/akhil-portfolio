@@ -5,6 +5,15 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Akhil — AI Engineer</title>
   <meta name="description" content="Akhil — AI engineer building LLM systems, agents and retrieval pipelines that ship." />
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  <meta name="theme-color" content="#0b0b0b" />
+  <!-- link previews (LinkedIn, X, WhatsApp): crawlers need absolute URLs -->
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Akhil — AI Engineer" />
+  <meta property="og:description" content="AI engineer building LLM systems, agents and retrieval pipelines that ship." />
+  <meta property="og:url" content="https://gouravv015.github.io/akhil-portfolio/" />
+  <meta property="og:image" content="https://gouravv015.github.io/akhil-portfolio/og.png" />
+  <meta name="twitter:card" content="summary_large_image" />
   <script>
     // set theme before paint so there's no flash
     try {
@@ -25,17 +34,42 @@
   </div>
 
   <header class="nav">
-    <a href="#top" class="logo" data-scramble>AKHIL</a>
+    <div class="nav-left">
+      <a href="#top" class="logo" data-scramble data-magnetic>AKHIL</a>
+      <span class="nav-count" aria-hidden="true">00 / 05</span>
+    </div>
+    <span class="nav-progress" aria-hidden="true"></span>
     <nav aria-label="Primary">
       <a href="#about" data-scramble>ABOUT</a>
       <a href="#work" data-scramble>WORK</a>
       <a href="#experience" data-scramble>EXPERIENCE</a>
       <a href="#contact" data-scramble>LET'S TALK</a>
-      <button class="theme-toggle" type="button" aria-label="Switch colour theme">
+      <button class="nav-btn ask-toggle" type="button" data-magnetic aria-expanded="false" aria-controls="ask-panel">
+        <span class="tt-dot" aria-hidden="true"></span><span>ASK AI</span>
+      </button>
+      <button class="nav-btn sound-toggle" type="button" data-magnetic aria-pressed="true" aria-label="Sound">
+        <span class="snd-bars" aria-hidden="true"><i></i><i></i><i></i></span><span class="snd-label">SND</span>
+      </button>
+      <button class="nav-btn theme-toggle" type="button" data-magnetic aria-label="Switch colour theme">
         <span class="tt-dot" aria-hidden="true"></span><span class="tt-label">DARK</span>
       </button>
     </nav>
   </header>
+
+  <!-- Ask Akhil: chat bot answering from src/content.js -->
+  <button class="ask-hint" type="button" hidden>
+    <b>NEW</b> HI, I'M AKHIL'S BOT. ASK ME ABOUT HIS WORK &rarr;
+  </button>
+  <div class="ask-panel" id="ask-panel" role="dialog" aria-label="Ask Akhil" hidden>
+    <div class="ask-bar"><span>AKHIL.EXE <i class="ask-status">ONLINE</i></span><button class="ask-close" type="button" aria-label="Close chat">[X]</button></div>
+    <div class="ask-log" role="log" aria-live="polite" data-lenis-prevent></div>
+    <div class="ask-chips"></div>
+    <form class="ask-form" autocomplete="off">
+      <label for="ask-input" class="ask-prompt">&gt;</label>
+      <input id="ask-input" name="q" type="text" maxlength="200" placeholder="ASK ANYTHING..." aria-label="Ask Akhil a question" />
+      <button type="submit">SEND</button>
+    </form>
+  </div>
 
   <main id="top">
     <!-- HERO -->
@@ -44,7 +78,7 @@
         <h1 class="hero-name" aria-label="Akhil"><span class="mask"><span class="rise">AKHIL</span></span></h1>
         <p class="hero-meta"><span>// AI ENGINEER</span><span>©2026</span></p>
       </div>
-      <p class="hero-intro" data-reveal>
+      <p class="hero-intro">
         INDEPENDENT AI ENGINEER BUILDING LLM SYSTEMS, AGENTS AND RETRIEVAL PIPELINES THAT ACTUALLY SHIP TO PRODUCTION.
       </p>
       <div class="hero-foot">
@@ -70,7 +104,7 @@
     <!-- WORK: 6 cards on a tilted drum, driven by scroll -->
     <section class="work" id="work">
       <div class="work-pin">
-        <canvas class="work-gl" aria-hidden="true"></canvas>
+        <canvas class="work-gl" aria-hidden="true" data-cursor="SCROLL"></canvas>
         <div class="work-ui">
           <p class="label">[ 02 ]</p>
           <h2>SELECTED WORK</h2>
@@ -84,16 +118,19 @@
     <section class="experience" id="experience">
       <p class="label" data-reveal>[ 03 ] EXPERIENCE</p>
       <ol class="xp">
-        <li data-reveal><span class="xp-year">2024 — NOW</span><span class="xp-role">SENIOR AI ENGINEER</span><span class="xp-co">COMPANY ONE</span></li>
-        <li data-reveal><span class="xp-year">2022 — 2024</span><span class="xp-role">ML ENGINEER</span><span class="xp-co">COMPANY TWO</span></li>
-        <li data-reveal><span class="xp-year">2021 — 2022</span><span class="xp-role">SOFTWARE ENGINEER</span><span class="xp-co">COMPANY THREE</span></li>
-        <li data-reveal><span class="xp-year">2017 — 2021</span><span class="xp-role">B.TECH, COMPUTER SCIENCE</span><span class="xp-co">UNIVERSITY</span></li>
+        <li data-reveal data-color="#1f4bff"><span class="xp-year">2024 — NOW</span><span class="xp-role">SENIOR AI ENGINEER</span><span class="xp-co">COMPANY ONE</span></li>
+        <li data-reveal data-color="#ff4a1c"><span class="xp-year">2022 — 2024</span><span class="xp-role">ML ENGINEER</span><span class="xp-co">COMPANY TWO</span></li>
+        <li data-reveal data-color="#0f9d6b"><span class="xp-year">2021 — 2022</span><span class="xp-role">SOFTWARE ENGINEER</span><span class="xp-co">COMPANY THREE</span></li>
+        <li data-reveal data-color="#7a2cff"><span class="xp-year">2017 — 2021</span><span class="xp-role">B.TECH, COMPUTER SCIENCE</span><span class="xp-co">UNIVERSITY</span></li>
       </ol>
     </section>
 
     <!-- STACK -->
     <section class="stack">
       <p class="label" data-reveal>[ 04 ] TOOLKIT</p>
+      <div class="marquee" aria-hidden="true">
+        <div class="marquee-track"><span>PYTHON ✦ PYTORCH ✦ LANGCHAIN ✦ LLAMAINDEX ✦ HUGGINGFACE ✦ PGVECTOR ✦ FASTAPI ✦ DOCKER ✦ AWS ✦ GCP ✦&nbsp;</span><span>PYTHON ✦ PYTORCH ✦ LANGCHAIN ✦ LLAMAINDEX ✦ HUGGINGFACE ✦ PGVECTOR ✦ FASTAPI ✦ DOCKER ✦ AWS ✦ GCP ✦&nbsp;</span></div>
+      </div>
       <div class="stack-grid">
         <div data-reveal><h3>MODELS</h3><p>GPT · CLAUDE · LLAMA<br />MISTRAL · WHISPER</p></div>
         <div data-reveal><h3>FRAMEWORKS</h3><p>LANGCHAIN · LLAMAINDEX<br />PYTORCH · HUGGINGFACE</p></div>
@@ -106,7 +143,7 @@
     <section class="contact" id="contact">
       <p class="label" data-reveal>[ 05 ] CONTACT</p>
       <h2 class="contact-big" aria-label="Let's talk"><span class="mask"><span class="rise">LET'S</span></span><span class="mask"><span class="rise">TALK</span></span></h2>
-      <a class="contact-mail" href="mailto:hello@example.com" data-scramble>HELLO@EXAMPLE.COM</a>
+      <a class="contact-mail" href="mailto:hello@example.com" data-scramble data-magnetic data-cursor="COPY">HELLO@EXAMPLE.COM</a>
     </section>
   </main>
 

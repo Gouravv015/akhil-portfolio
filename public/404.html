@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>404 — Akhil</title>
+  <link rel="icon" href="/akhil-portfolio/favicon.svg" type="image/svg+xml" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Silkscreen&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <style>
+    :root { --bg: #f2f2ef; --ink: #0d0d0d; --mute: #8d8d88; }
+    @media (prefers-color-scheme: dark) { :root { --bg: #0b0b0b; --ink: #ececE8; --mute: #6c6c68; } }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      min-height: 100svh; display: flex; flex-direction: column; justify-content: center; gap: 24px; padding: 24px clamp(16px, 3vw, 40px);
+      background: var(--bg); color: var(--ink); font: 13px/1.6 'Space Mono', monospace; letter-spacing: .04em;
+    }
+    h1 { font: 400 clamp(96px, 26vw, 420px)/.8 'Silkscreen', monospace; }
+    p { color: var(--mute); max-width: 44ch; }
+    p span::after { content: '_'; animation: blink 1s steps(2) infinite; }
+    a { align-self: flex-start; color: inherit; border: 1px solid; padding: 10px 16px; text-decoration: none; }
+    a:hover { background: var(--ink); color: var(--bg); }
+    @keyframes blink { 50% { opacity: 0; } }
+    @media (prefers-reduced-motion: reduce) { p span::after { animation: none; } }
+  </style>
+</head>
+<body>
+  <h1>404</h1>
+  <p>ERROR: PAGE NOT FOUND IN CONTEXT WINDOW. THE MODEL HALLUCINATED THIS URL.<br /><span>&gt; RETURNING TO A KNOWN STATE</span></p>
+  <a href="/akhil-portfolio/">&larr; BACK HOME</a>
+</body>
+</html>
