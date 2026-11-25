@@ -92,7 +92,7 @@ function drawCardTexture(p, i) {
   g.font = '28px "Space Mono"';
   g.fillText(`[0${i + 1}]  ${p.tag}`, 64, 250);
   g.fillStyle = 'rgba(0,0,0,.55)';
-  g.fillText('VIEW CASE  ->', 64, 740);
+  g.fillText(p.note, 64, 740);
   const t = new THREE.CanvasTexture(c);
   t.colorSpace = THREE.SRGBColorSpace;
   return t;

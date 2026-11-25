@@ -7,11 +7,13 @@ const botTick = () => blip(1300 + Math.random() * 900, 0.025, 0.025);
 const keyTick = () => blip(520 + Math.random() * 160, 0.035, 0.035, 'triangle');
 const sendChirp = () => { blip(880, 0.05, 0.03); setTimeout(() => blip(1320, 0.07, 0.03), 60); };
 
-// shortcut: keyword matching on placeholder answers, swap for a real model endpoint once there is a resume and a backend
+// shortcut: keyword scoring over hand-written answers, swap for an LLM behind a server once free-form questions matter
 export function answer(q) {
-  const s = ` ${q.toLowerCase().replace(/[^a-z0-9 ]/g, ' ')} `;
-  const topic = ask.topics.find((t) => t.keys.some((k) => s.includes(` ${k} `) || (k.length > 3 && s.includes(k))));
-  return pick(topic ? topic.answers : ask.fallback);
+  const s = ` ${q.toLowerCase().replace(/[^a-z0-9]+/g, ' ')} `;
+  // keys match at word starts (short ones as whole words); longer matches count for more
+  const score = (t) => t.keys.reduce((n, k) => n + (s.includes(k.length > 3 ? ` ${k}` : ` ${k} `) ? k.length : 0), 0);
+  const best = ask.topics.reduce((a, t) => (score(t) > score(a) ? t : a));
+  return pick(score(best) ? best.answers : ask.fallback);
 }
 
 export function initAsk({ reduced }) {
