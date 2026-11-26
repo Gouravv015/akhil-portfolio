@@ -76,14 +76,14 @@ const postFrag = /* glsl */ `
   }
 `;
 
-function drawCardTexture(p, i) {
-  const c = document.createElement('canvas');
-  c.width = 1280;
-  c.height = 800;
-  const g = c.getContext('2d');
+// card artwork, buttons included, so they bend, glitch and tilt with the card.
+// `hot` / `focus` index the button under the pointer / with keyboard focus. Returns the buttons' rects.
+function paintCard(g, p, i, actions, hot = -1, focus = -1) {
+  const phone = innerWidth <= 800; // the card is small there: bigger type
   const grd = g.createLinearGradient(0, 0, 0, 800);
   grd.addColorStop(0, p.color);
-  grd.addColorStop(1, '#ffffff');
+  grd.addColorStop(0.25, p.color);
+  grd.addColorStop(0.52, '#ffffff'); // description and buttons sit on the white half
   g.fillStyle = grd;
   g.fillRect(0, 0, 1280, 800);
   g.fillStyle = '#fff';
@@ -91,14 +91,48 @@ function drawCardTexture(p, i) {
   g.fillText(p.title, 64, 180, 1150);
   g.font = '28px "Space Mono"';
   g.fillText(`[0${i + 1}]  ${p.tag}`, 64, 250);
-  g.fillStyle = 'rgba(0,0,0,.55)';
-  g.fillText(p.note, 64, 740);
-  const t = new THREE.CanvasTexture(c);
-  t.colorSpace = THREE.SRGBColorSpace;
-  return t;
+  g.fillText(p.note, 64, 300);
+
+  const size = phone ? 44 : 34;
+  g.fillStyle = '#0d0d0d';
+  g.font = `700 ${size}px "Space Mono"`;
+  let line = '', y = phone ? 420 : 470;
+  for (const word of p.blurb.split(' ')) {
+    if (g.measureText(line + word).width > 1140) { g.fillText(line, 64, y); line = ''; y += size * 1.38; }
+    line += word + ' ';
+  }
+  g.fillText(line, 64, y);
+
+  // buttons along the bottom, shrunk to fit one row
+  let font = phone ? 34 : 26, rects;
+  do {
+    g.font = `700 ${font}px "Space Mono"`;
+    const h = font * 2.5, pad = font, gap = 16;
+    let x = 64;
+    rects = actions.map((a) => {
+      const w = g.measureText(a.label).width + pad * 2, r = { x, y: 760 - h, w, h };
+      x += w + gap;
+      return r;
+    });
+    font -= 2;
+  } while (rects.at(-1).x + rects.at(-1).w > 1216 && font > 16);
+  rects.forEach((r, n) => {
+    const filled = n === 0 || n === hot || n === focus;
+    g.fillStyle = n === hot || n === focus ? p.color : '#0d0d0d';
+    if (filled) g.fillRect(r.x, r.y, r.w, r.h);
+    g.lineWidth = 3;
+    g.strokeStyle = n === hot || n === focus ? p.color : '#0d0d0d';
+    g.strokeRect(r.x + 1.5, r.y + 1.5, r.w - 3, r.h - 3);
+    if (n === focus) { g.setLineDash([8, 6]); g.strokeStyle = '#0d0d0d'; g.strokeRect(r.x - 8, r.y - 8, r.w + 16, r.h + 16); g.setLineDash([]); }
+    g.fillStyle = filled ? '#fff' : '#0d0d0d';
+    g.textBaseline = 'middle';
+    g.fillText(actions[n].label, r.x + (r.w - g.measureText(actions[n].label).width) / 2, r.y + r.h / 2 + 2);
+    g.textBaseline = 'alphabetic';
+  });
+  return rects;
 }
 
-export function initWork(section, { reduced, scrollTo, lenis }) {
+export function initWork(section, { reduced, scrollTo, lenis, openCase }) {
   const canvas = section.querySelector('.work-gl');
   const list = section.querySelector('.work-list');
 
@@ -118,7 +152,8 @@ export function initWork(section, { reduced, scrollTo, lenis }) {
   try {
     renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
   } catch {
-    return; // no WebGL: list still works as plain navigation
+    buttons.forEach((b, i) => b.addEventListener('click', () => openCase(i))); // no WebGL: the list opens the case studies
+    return;
   }
   renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
   renderer.outputColorSpace = THREE.SRGBColorSpace;
@@ -130,15 +165,29 @@ export function initWork(section, { reduced, scrollTo, lenis }) {
   const geo = new THREE.PlaneGeometry(CARD_W, CARD_H, 40, 24);
   const loader = new THREE.TextureLoader();
   const cards = projects.map((p, i) => {
+    const art = document.createElement('canvas');
+    art.width = 1280;
+    art.height = 800;
+    const tex = new THREE.CanvasTexture(art);
+    tex.colorSpace = THREE.SRGBColorSpace;
     const mat = new THREE.ShaderMaterial({
       vertexShader: cardVert,
       fragmentShader: cardFrag,
       transparent: true,
       side: THREE.DoubleSide,
-      uniforms: { uTex: { value: drawCardTexture(p, i) }, uBend: { value: 1 }, uOpacity: { value: 1 }, uTime: { value: 0 } },
+      uniforms: { uTex: { value: tex }, uBend: { value: 1 }, uOpacity: { value: 1 }, uTime: { value: 0 } },
     });
     if (p.image) loader.load(p.image, (t) => { t.colorSpace = THREE.SRGBColorSpace; mat.uniforms.uTex.value.dispose(); mat.uniforms.uTex.value = t; });
     const m = new THREE.Mesh(geo, mat);
+    // what the card's buttons do: the case study, then each public link
+    m.userData.actions = [{ label: 'CASE STUDY ->', cursor: 'OPEN', run: () => openCase(i) },
+      ...p.links.map(([label, url]) => ({ label: `${label} ->`, cursor: 'VISIT', run: () => open(url, '_blank', 'noopener') }))];
+    m.userData.paint = (hot, focus) => {
+      if (p.image) return; // a supplied image replaces the drawn card
+      m.userData.rects = paintCard(art.getContext('2d'), p, i, m.userData.actions, hot, focus);
+      tex.needsUpdate = true;
+    };
+    m.userData.paint();
     scene.add(m);
     return m;
   });
@@ -172,7 +221,8 @@ export function initWork(section, { reduced, scrollTo, lenis }) {
     camera.aspect = w / h;
     post.material.uniforms.uAspect.value = camera.aspect;
     spread = Math.min(1, camera.aspect / 1.4);
-    camera.position.z = camera.aspect < 1 ? 3 : 0; // pull back so the card fits portrait screens
+    // pull back until the whole card fits the width (portrait screens)
+    camera.position.z = Math.max(0, (CARD_W * 1.12) / (2 * Math.tan((camera.fov * Math.PI) / 360) * camera.aspect) - FOCUS);
     camera.updateProjectionMatrix();
   }
   resize();
@@ -223,6 +273,62 @@ export function initWork(section, { reduced, scrollTo, lenis }) {
     });
   }
 
+  // ----- the focused card's buttons are drawn on it; clicks are traced back onto the bent card -----
+  const info = section.querySelector('.work-info');
+  const actions = info.querySelector('.work-actions');
+  let hot = -1;
+  const settled = () => visible && Math.abs(current - active) < 0.08;
+  const ray = new THREE.Raycaster(), ndc = new THREE.Vector2(), inv = new THREE.Matrix4();
+  // screen point -> which drawn button of the focused card is under it (-1 for none)
+  const hit = (e) => {
+    const m = cards[active];
+    if (!settled() || !m.userData.rects) return -1;
+    const r = canvas.getBoundingClientRect();
+    // the post pass shows scene pixel lens(uv) at screen uv, so follow the same lens forward
+    const cx = (e.clientX - r.left) / r.width - 0.5, cy = 0.5 - (e.clientY - r.top) / r.height;
+    const k = (1 + LENS * ((cx * camera.aspect) ** 2 + cy * cy)) / (1 + LENS * 0.25);
+    ndc.set(cx * k * 2, cy * k * 2);
+    ray.setFromCamera(ndc, camera);
+    inv.copy(m.matrixWorld).invert();
+    const o = ray.ray.origin.clone().applyMatrix4(inv), d = ray.ray.direction.clone().transformDirection(inv);
+    const bend = m.material.uniforms.uBend.value;
+    let x = 0, y = 0, z = 0;
+    for (let n = 0; n < 4; n++) { // the vertex shader bulges the card; walk the ray onto that surface
+      const t = (z - o.z) / d.z;
+      x = o.x + t * d.x;
+      y = o.y + t * d.y;
+      z = -(x * x * 0.12 + y * y * 0.16) * bend;
+    }
+    const px = (x / CARD_W + 0.5) * 1280, py = (0.5 - y / CARD_H) * 800;
+    return m.userData.rects.findIndex((b) => px >= b.x && px <= b.x + b.w && py >= b.y && py <= b.y + b.h);
+  };
+  const setHot = (n) => {
+    if (n === hot) return;
+    hot = n;
+    cards[active].userData.paint(hot);
+    canvas.dataset.cursor = hot < 0 ? 'SCROLL' : cards[active].userData.actions[hot].cursor;
+    canvas.dispatchEvent(new PointerEvent('pointerover', { bubbles: true })); // refresh the custom cursor's label
+  };
+  canvas.addEventListener('pointermove', (e) => e.pointerType === 'mouse' && setHot(hit(e)));
+  canvas.addEventListener('pointerleave', () => setHot(-1));
+  canvas.addEventListener('click', (e) => { const n = hit(e); if (n >= 0) cards[active].userData.actions[n].run(); });
+
+  // real buttons for keyboard and screen readers, visually hidden: focusing one lights it up on the card
+  const showInfo = (i) => {
+    const p = projects[i];
+    info.querySelector('h3').textContent = p.title;
+    info.querySelector('p').textContent = p.blurb;
+    actions.replaceChildren(...cards[i].userData.actions.map((a, n) => {
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.textContent = a.label.replace(' ->', '');
+      b.addEventListener('click', a.run);
+      b.addEventListener('focus', () => cards[i].userData.paint(-1, n));
+      b.addEventListener('blur', () => cards[i].userData.paint());
+      return b;
+    }));
+  };
+
   const clock = new THREE.Clock();
   function frame() {
     requestAnimationFrame(frame);
@@ -247,8 +353,11 @@ export function initWork(section, { reduced, scrollTo, lenis }) {
 
     const a = Math.round(current);
     if (a !== active) {
+      if (active >= 0) cards[active].userData.paint();
+      hot = -1;
       active = a;
       buttons.forEach((b, i) => b.setAttribute('aria-current', String(i === a)));
+      showInfo(a);
     }
 
     renderOnce();

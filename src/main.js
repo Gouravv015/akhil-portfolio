@@ -4,7 +4,9 @@ import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import Lenis from 'lenis';
 import { initWork } from './work.js';
-import { pixelSwap, pixelOut } from './pixels.js';
+import { initCase } from './case.js';
+import { pixelSwap } from './pixels.js';
+import { denoise, land } from './preloader.js';
 import { initAsk } from './ask.js';
 import { initPolish } from './polish.js';
 
@@ -120,30 +122,25 @@ function scrollFx() {
   gsap.fromTo('.contact-big .mask:last-child .rise', { xPercent: 18 }, { xPercent: 0, ease: 'none', scrollTrigger: { trigger: '.contact', start: 'top bottom', end: 'top 20%', scrub: true } });
 }
 
-// ---------- preloader -> pixel erase -> hero intro ----------
+// ---------- preloader: denoise -> pixels land as the hero name -> rest of the hero fades in ----------
 function intro() {
   if (reduced) return;
-  gsap.timeline()
-    .from('.hero-name .rise', { yPercent: 105, duration: 1.2, ease: 'power4.out' })
-    .from('.nav > :not(.nav-progress),.hero-meta span, .hero-intro, .hero-foot > *', { y: 14, autoAlpha: 0, duration: 0.7, stagger: 0.06, ease: 'power3.out' }, '-=0.8');
+  gsap.from('.nav > :not(.nav-progress), .hero-meta span, .hero-intro, .hero-foot > *', { y: 14, autoAlpha: 0, duration: 0.7, stagger: 0.06, ease: 'power3.out', delay: 0.7 });
 }
 
 const announceAsk = initAsk({ reduced });
 const pre = document.querySelector('.preloader');
-const count = pre.querySelector('.pre-count');
-const bar = pre.querySelector('.pre-bar i');
+const heroName = document.querySelector('.hero-name .rise');
 lenis?.stop();
-const state = { p: 0 };
-const loading = gsap.to(state, {
-  p: 100, duration: reduced ? 0 : 1.6, ease: 'power2.inOut',
-  onUpdate: () => { bar.style.width = state.p + '%'; count.textContent = String(Math.round(state.p)).padStart(3, '0'); },
-});
-Promise.all([document.fonts.ready, loading.then()]).then(() => {
-  initWork(document.querySelector('.work'), { reduced, scrollTo, lenis });
+// letters are read from the pixel font, so wait for it, but never hang on a slow font server
+const font = Promise.race([document.fonts.load('40px Silkscreen'), new Promise((r) => setTimeout(r, 2000))]).catch(() => {});
+const loading = reduced ? font : font.then(() => denoise(pre, heroName));
+Promise.all([document.fonts.ready, loading]).then(() => {
+  initWork(document.querySelector('.work'), { reduced, scrollTo, lenis, openCase: initCase({ reduced, lenis }) });
   initPolish({ reduced, lenis });
   scrollFx();
   ScrollTrigger.refresh();
   if (reduced) return pre.remove(), announceAsk();
   intro();
-  pixelOut(pre, 1000).then(() => { lenis?.start(); announceAsk(); });
+  land(pre, heroName).then(() => { lenis?.start(); announceAsk(); });
 });

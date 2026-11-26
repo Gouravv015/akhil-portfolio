@@ -28,9 +28,12 @@
 </head>
 <body>
   <div class="preloader" aria-hidden="true">
-    <span class="pre-label">LOADING</span>
-    <span class="pre-bar"><i></i></span>
-    <span class="pre-count">000</span>
+    <div class="pre-bg"></div>
+    <canvas></canvas>
+    <span class="pre-hud pre-tl">PROMPT<br /><b>&gt;</b></span>
+    <span class="pre-hud pre-tr">SIGMA <b>1.000</b></span>
+    <span class="pre-hud pre-bl">DENOISING</span>
+    <span class="pre-hud pre-br">STEP <b>00</b> / 28</span>
   </div>
 
   <header class="nav">
@@ -110,6 +113,7 @@
           <h2>SELECTED WORK</h2>
           <ol class="work-list"></ol>
         </div>
+        <div class="work-info"><h3></h3><p></p><div class="work-actions"></div></div>
         <p class="work-hint">SCROLL TO BROWSE</p>
       </div>
     </section>
@@ -132,8 +136,8 @@
         <div class="marquee-track"><span>PYTHON ✦ LANGGRAPH ✦ MCP ✦ LANGCHAIN ✦ LLAMAINDEX ✦ QDRANT ✦ LANGFUSE ✦ FASTAPI ✦ REACT ✦ AWS ✦&nbsp;</span><span>PYTHON ✦ LANGGRAPH ✦ MCP ✦ LANGCHAIN ✦ LLAMAINDEX ✦ QDRANT ✦ LANGFUSE ✦ FASTAPI ✦ REACT ✦ AWS ✦&nbsp;</span></div>
       </div>
       <div class="stack-grid">
-        <div data-reveal><h3>GENAI</h3><p>LANGGRAPH · LANGCHAIN<br />MCP · RAG · LANGFUSE</p></div>
-        <div data-reveal><h3>ML + NLP</h3><p>TENSORFLOW · KERAS<br />SCIKIT-LEARN · HUGGINGFACE</p></div>
+        <div data-reveal><h3>GENAI</h3><p>LANGGRAPH · LANGCHAIN · LLAMAINDEX<br />MCP · RAG · RERANKING · LANGFUSE</p></div>
+        <div data-reveal><h3>ML + NLP</h3><p>TENSORFLOW · KERAS · SCIKIT-LEARN<br />HUGGINGFACE · PANDAS · NUMPY</p></div>
         <div data-reveal><h3>DATA</h3><p>POSTGRESQL · MONGODB · REDIS<br />QDRANT · FAISS · NEO4J</p></div>
         <div data-reveal><h3>SHIP</h3><p>FASTAPI · REACT · NEXT.JS<br />AWS · DOCKER · GITHUB ACTIONS</p></div>
       </div>

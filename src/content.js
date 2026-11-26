@@ -1,11 +1,60 @@
-// Edit these. `image` is optional (any URL / file in /public); without it a card with title, tag and note is drawn.
+// Work cards and their case studies. Facts come from Akhil's resume and the BUDDY README only.
+// `impact`: measured before/after pairs (shown big). `stats`: other numbers. `facts`: short highlights when there are no numbers.
+// `links` are [label, url]; leave empty when nothing is public. `image` (optional) replaces the drawn card.
+const PRAVEG = 'PRODUCTSQUADS / PRAVEG.AI';
+const pravegLink = [['VISIT PRAVEG.AI', 'https://praveg.ai']];
+const pravegNote = 'The platform code is not public. The link opens the product Akhil works on.';
 export const projects = [
-  { title: 'Hybrid RAG', tag: '56% TO 87% ANSWER ACCURACY', note: 'PRODUCTSQUADS / PRAVEG.AI', color: '#1f4bff', image: '' },
-  { title: 'Grounded Agents', tag: '45% TO 90% GROUNDEDNESS', note: 'PRODUCTSQUADS / PRAVEG.AI', color: '#ff4a1c', image: '' },
-  { title: 'MCP Host', tag: 'REMOTE TOOLS FOR AGENTS', note: 'PRODUCTSQUADS / PRAVEG.AI', color: '#0f9d6b', image: '' },
-  { title: 'Aegis', tag: 'MCP SECURITY + RAG DIAGNOSTICS', note: 'PROJECT / IN PROGRESS', color: '#7a2cff', image: '' },
-  { title: 'BUDDY', tag: 'SKILL ASSESSMENT AGENT', note: 'PROJECT / 2026', color: '#111111', image: '' },
-  { title: 'AI Scorecard', tag: 'REACT + FASTAPI', note: 'PRODUCTSQUADS', color: '#e6a100', image: '' },
+  {
+    title: 'Hybrid RAG', tag: '56% TO 87% ANSWER ACCURACY', note: PRAVEG, color: '#1f4bff', image: '',
+    blurb: 'Retrieval for an enterprise data platform. Better chunking and hybrid search raised answer accuracy from 56% to 87% on a 500-document corpus.',
+    context: 'Praveg.ai is an agentic enterprise data platform. Its RAG answers over a 500-document enterprise corpus started at 56% accuracy.',
+    built: ['Optimized the chunking strategies.', 'Hybrid retrieval in Qdrant: dense embeddings plus BM25 sparse vectors.', 'Cross-encoder reranking.', 'Validation against golden datasets covering direct, multi-turn, table/chart and summarization queries.'],
+    role: 'AI SOFTWARE ENGINEER INTERN', impact: [{ label: 'ANSWER ACCURACY', before: 56, after: 87, unit: '%' }], stats: [['500', 'DOCUMENT CORPUS'], ['4', 'QUERY TYPES IN THE GOLDEN SET']],
+    stack: ['Qdrant', 'Dense embeddings', 'BM25', 'Cross-encoder reranking'], links: pravegLink, linkNote: pravegNote,
+  },
+  {
+    title: 'Grounded Agents', tag: '45% TO 90% GROUNDEDNESS', note: PRAVEG, color: '#ff4a1c', image: '',
+    blurb: 'Agents that cite their sources and refuse when the evidence is thin. Groundedness went from 45% to 90%.',
+    context: 'Agent answers on the platform measured 45% grounded. The goal was answers backed by evidence, and a refusal when there is not enough of it.',
+    built: ['Enforced grounding checks in the LangGraph orchestrator.', 'Source citations.', 'Low-evidence refusal.', 'Measurement through Langfuse traces and an automated evaluation harness.'],
+    role: 'AI SOFTWARE ENGINEER INTERN', impact: [{ label: 'AGENT GROUNDEDNESS', before: 45, after: 90, unit: '%' }],
+    stack: ['LangGraph', 'Langfuse', 'Evaluation harness'], links: pravegLink, linkNote: pravegNote,
+  },
+  {
+    title: 'MCP Host', tag: 'REMOTE TOOLS FOR AGENTS', note: PRAVEG, color: '#0f9d6b', image: '',
+    blurb: 'An MCP host and client that lets platform agents discover and use tools on remote MCP servers.',
+    context: 'Platform agents needed to find and call tools that live on remote servers, next to toolkits managed by Composio.',
+    built: ['MCP host and client for discovering and invoking tools on remote MCP servers.', 'Tool-catalog caching and token handling.', 'Works alongside Composio-managed toolkits.', 'Co-built in-house MCP servers for an enterprise client.'],
+    role: 'AI SOFTWARE ENGINEER INTERN', facts: ['HOST + CLIENT', 'TOOL-CATALOG CACHING', 'ENTERPRISE MCP SERVERS'],
+    stack: ['MCP', 'Composio'], links: pravegLink, linkNote: pravegNote,
+  },
+  {
+    title: 'Aegis', tag: 'MCP SECURITY + RAG DIAGNOSTICS', note: 'PROJECT / IN PROGRESS', color: '#7a2cff', image: '', ongoing: true,
+    blurb: 'A security layer that checks MCP tool calls before agents run them, and a tool that explains why a RAG answer failed.',
+    context: 'Agents can call tools with risky permissions, and a wrong RAG answer rarely says what went wrong. Aegis works on both.',
+    built: ['A layer that scans and guards MCP servers and tool calls for risky permissions and unsafe actions before agents execute them.', 'A RAG failure diagnoser that traces retrieval and generation through Langfuse.', 'It pinpoints a retrieval miss, weak grounding or a prompt issue, and recommends fixes.'],
+    role: 'PERSONAL PROJECT', facts: ['TOOL-CALL GUARD', 'RAG FAILURE DIAGNOSER', 'IN PROGRESS'],
+    stack: ['Python', 'LangGraph', 'MCP', 'Langfuse', 'Open-source LLMs'], links: [],
+  },
+  {
+    title: 'BUDDY', tag: 'SKILL ASSESSMENT AGENT', note: 'PROJECT / 2026', color: '#c2185b', image: '',
+    blurb: 'Reads a job description and a resume, interviews the candidate, then builds a week-by-week plan to close the skill gaps.',
+    context: 'A resume says what someone claims to know, not how well they know it. BUDDY tests the claim in conversation and plans what to learn next.',
+    built: ['Parses the job description and resume with parallel async LLM calls.', 'Maps matched, missing and adjacent skills.', 'Adaptive LLaMA-3-70B interview: difficulty moves with each answer, scored by a deterministic 0-100 state machine.', 'FAISS RAG over learning resources, with the embedding model lazy-loaded for faster cold starts.', 'Week-by-week roadmap and Plotly gap-analysis dashboards, deployed on Render.'],
+    role: 'PERSONAL PROJECT', stats: [['0-100', 'SCORED INTERVIEW'], ['3-6', 'QUESTIONS PER SKILL'], ['70B', 'LLAMA-3 INTERVIEWER']],
+    stack: ['Python', 'FastAPI', 'FAISS', 'SentenceTransformers', 'LLaMA-3', 'Groq', 'Streamlit', 'Plotly'],
+    links: [['GITHUB', 'https://github.com/AKHIL-SAURABH/BUDDY'], ['LIVE DEMO', 'https://catalyst-frontend-fja2.onrender.com'], ['VIDEO', 'https://github.com/user-attachments/assets/df852d61-e7c2-4a9c-bb8a-97e3961942a2']],
+    linkNote: 'The live demo sleeps when idle and can take a few minutes to wake. The video shows it straight away.',
+  },
+  {
+    title: 'AI Scorecard', tag: 'REACT + FASTAPI', note: 'PRODUCTSQUADS', color: '#a86f00', image: '',
+    blurb: 'An AI Readiness quiz for the company website, owned end to end, from the React interface to the emailed report.',
+    context: 'The AI Readiness Scorecard is a quiz on the company website that reports back by email and routes leads.',
+    built: ['React quiz interface.', 'FastAPI validation.', 'Automated email reports.', 'Lead routing.'],
+    role: 'AI SOFTWARE ENGINEER INTERN', facts: ['REACT QUIZ', 'FASTAPI VALIDATION', 'EMAIL REPORTS + LEAD ROUTING'],
+    stack: ['React', 'FastAPI'], links: [],
+  },
 ];
 
 // "Ask Akhil" answers, written by hand from Akhil's resume (Nov 2026). Keep every claim traceable to it.

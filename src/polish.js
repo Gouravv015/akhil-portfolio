@@ -1,6 +1,7 @@
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { blip, soundOn, setSound } from './sound.js';
+import { techText, folders, pixelTrail } from './bits.js';
 
 const fine = matchMedia('(hover: hover) and (pointer: fine)').matches;
 
@@ -10,6 +11,8 @@ export function initPolish({ reduced, lenis }) {
   copyEmail();
   marquee(reduced, lenis);
   if (reduced) return;
+  folders(document.querySelector('.stack-grid'));
+  techText(document.querySelector('.hero-name .rise'));
   decodeLabels();
   countUp();
   if (!fine) return; // pointer-only flourishes
@@ -17,6 +20,7 @@ export function initPolish({ reduced, lenis }) {
   magnetic();
   xpPreview();
   letters();
+  pixelTrail();
 }
 
 // ---------- labels and small headings decode from glyph noise as they enter ----------
@@ -33,7 +37,7 @@ function decode(el, dur = 700) {
   requestAnimationFrame(step);
 }
 function decodeLabels() {
-  document.querySelectorAll('.label, .work-ui h2, .stack-grid h3').forEach((el) =>
+  document.querySelectorAll('.label, .work-ui h2, .folder-label').forEach((el) =>
     ScrollTrigger.create({ trigger: el, start: 'top 92%', once: true, onEnter: () => decode(el) }));
 }
 
@@ -49,14 +53,13 @@ function countUp() {
   });
 }
 
-// ---------- giant type: letters lean away from the cursor ----------
+// ---------- contact words: letters lean away from the cursor (the hero name uses techText) ----------
 function letters() {
-  const chars = [...document.querySelectorAll('.hero-name .rise, .contact-big .rise')].flatMap((rise) => {
+  const chars = [...document.querySelectorAll('.contact-big .rise')].flatMap((rise) => {
     rise.innerHTML = [...rise.textContent].map((ch) => `<span class="ch">${ch}</span>`).join(''); // headings keep their aria-label
     return [...rise.children];
   });
-  // the masks clip the intro rise; free them afterwards so lifted letters aren't cut off
-  gsap.delayedCall(2.5, () => document.querySelectorAll('.hero-name .mask, .contact-big .mask').forEach((m) => (m.style.overflow = 'visible')));
+  document.querySelectorAll('.contact-big .mask').forEach((m) => (m.style.overflow = 'visible')); // lifted letters aren't cut off
   const movers = chars.map((el) => ({
     el,
     x: gsap.quickTo(el, 'x', { duration: 0.7, ease: 'power3' }),
