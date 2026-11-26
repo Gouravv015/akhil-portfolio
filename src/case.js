@@ -19,6 +19,28 @@ export function initCase({ reduced, lenis }) {
     try { await pixelSwap(fn, 700); } finally { busy = false; }
   };
 
+  // The flick that carried the reader down to "next case" keeps sending wheel input for a while
+  // (trackpad momentum, free-spinning wheels), which scrolled the new case straight to its bottom.
+  // After switching cases, swallow that tail until the wheel has been quiet for a moment.
+  let quietUntil = 0;
+  dlg.addEventListener('wheel', (e) => {
+    const now = performance.now();
+    if (now > quietUntil) return;
+    e.preventDefault();
+    quietUntil = Math.max(quietUntil, now + 180); // still streaming: keep swallowing
+  }, { passive: false });
+  const go = (i) => {
+    quietUntil = performance.now() + 1000; // covers the 700ms transition
+    dlg.style.overflow = 'hidden'; // also stops a touch fling mid-transition
+    swap(() => {
+      render(i);
+      body.querySelector('.case-close').focus({ preventScroll: true });
+    }).finally(() => {
+      dlg.style.overflow = '';
+      dlg.scrollTop = 0;
+    });
+  };
+
   // sections glide up as they scroll into the dialog; impact numbers count and meters fill on arrival
   const io = new IntersectionObserver((entries) => entries.forEach((e) => {
     if (!e.isIntersecting) return;
@@ -109,10 +131,7 @@ export function initCase({ reduced, lenis }) {
       <button type="button" class="case-next" data-go="${next}" style="--n:${projects[next].color}"><small>NEXT CASE [0${next + 1}]</small><strong>${projects[next].title} -></strong></button>`;
     dlg.scrollTop = 0;
     body.querySelector('.case-close').addEventListener('click', () => swap(() => dlg.close()));
-    body.querySelectorAll('[data-go]').forEach((b) => b.addEventListener('click', () => swap(() => {
-      render(+b.dataset.go);
-      body.querySelector('.case-close').focus();
-    })));
+    body.querySelectorAll('[data-go]').forEach((b) => b.addEventListener('click', () => go(+b.dataset.go)));
     body.querySelectorAll('[data-in]').forEach((el) => io.observe(el));
   }
 
